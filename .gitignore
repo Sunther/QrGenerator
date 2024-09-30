@@ -24,6 +24,7 @@ Thumbs.db
 
 #ignore VS folders
 bin/
+publish/
 obj/
 packages/
 .vs/
