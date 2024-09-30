@@ -16,17 +16,24 @@ public static class Program
 
         var svgCode = QrGeneratorFactory.GetQrCodeGenerator();
 
-        //svgCode.CreateBasicFile(
-        //    args[0],
-        //    args[1],
-        //    new Bitmap(args[2]));
-        
-        svgCode.CreateWiFiFile(
-            args[0],
-            args[1],
-            args[2],
-            bitmap: new Bitmap(args[3]));
+        if (args.Length == 3)
+        {
+            svgCode.CreateBasicFile(
+                args[0],
+                args[1],
+                new Bitmap(args[2]));
 
-        ExplorerManagement.OpenFolderContainingFile(args[3]);
+            ExplorerManagement.OpenFolderContainingFile(args[1]);
+        }
+        else if (args.Length == 4)
+        {
+            svgCode.CreateWiFiFile(
+                args[0],
+                args[1],
+                args[2],
+                bitmap: new Bitmap(args[3]));
+
+            ExplorerManagement.OpenFolderContainingFile(args[2]);
+        }
     }
 }
