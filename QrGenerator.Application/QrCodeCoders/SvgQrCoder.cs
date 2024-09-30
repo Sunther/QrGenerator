@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using QRCoder;
-using QrGenerator.Application.Enums;
 using QrGenerator.Disk;
 using static QRCoder.SvgQRCode;
 
@@ -34,13 +33,13 @@ public class SvgQrCoder
         string ssid,
         string password,
         string filePath,
-        WiFiSecurityType type = WiFiSecurityType.WPA,
+        PayloadGenerator.WiFi.Authentication type = PayloadGenerator.WiFi.Authentication.WPA,
         Bitmap? bitmap = null)
     {
-        var content = string.Concat("WIFI:S:", ssid, ";T:", type.ToString(), ";P:", password, ";;");
+        var wifiPayload = new PayloadGenerator.WiFi(ssid, password, PayloadGenerator.WiFi.Authentication.WPA);
 
         using (var qrGenerator = new QRCodeGenerator())
-        using (var qrCodeData = qrGenerator.CreateQrCode(content, QRCodeGenerator.ECCLevel.Q))
+        using (var qrCodeData = qrGenerator.CreateQrCode(wifiPayload.ToString(), QRCodeGenerator.ECCLevel.Q))
         using (var qrCode = new SvgQRCode(qrCodeData))
         {
             _fileWriter.CreateFile(
