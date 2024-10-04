@@ -1,0 +1,33 @@
+#Ignore files build by Visual Studio
+*.obj
+*.pdb
+*.user
+*.aps
+*.pch
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+*.dll
+*.lib
+*.sbr  
+DataSource-app.db*
+Thumbs.db
+
+
+#ignore VS folders
+bin/
+publish/
+obj/
+packages/
+.vs/
+AuthExample/Migrations
+
+#Exceptions
