@@ -6,22 +6,37 @@ namespace QrGenerator.Application.QrCodeCoders;
 
 public class PngQrCoder
 {
+    private const int QrCodeSize = 500;
+
     public void CreateWiFiQrFile(
         string ssid,
         string password,
         string filePath,
-        PayloadGenerator.WiFi.Authentication type = PayloadGenerator.WiFi.Authentication.WPA,
+        string? authType = null,
         Bitmap? bitmap = null)
     {
-        var wifiPayload = new PayloadGenerator.WiFi(ssid, password, PayloadGenerator.WiFi.Authentication.WPA);
+        var bitmapQr = GetWiFiQr(ssid, password, authType, bitmap);
+        bitmapQr.Save(filePath);
+    }
+
+    public Bitmap GetWiFiQr(
+        string ssid,
+        string password,
+        string? authType = null,
+        Bitmap? bitmap = null)
+    {
+        var type = authType is null ? PayloadGenerator.WiFi.Authentication.WPA :
+            Enum.Parse<PayloadGenerator.WiFi.Authentication>(authType);
+        Bitmap bitmapResult;
+        var wifiPayload = new PayloadGenerator.WiFi(ssid, password, type);
 
         using (var qrGenerator = new QRCodeGenerator())
         using (var qrCodeData = qrGenerator.CreateQrCode(wifiPayload.ToString(), QRCodeGenerator.ECCLevel.Q))
         using (var qrCode = new QRCode(qrCodeData))
         {
-            var qrCodeAsBitmapByteArr = qrCode.GetGraphic(20, Color.Black, Color.White, icon: bitmap?.AddCaption(ssid));
-
-            qrCodeAsBitmapByteArr.Save(filePath);
+            bitmapResult = qrCode.GetGraphic(QrCodeSize, Color.Black, Color.White, icon: bitmap?.AddCaption(ssid));
         }
+
+        return bitmapResult;
     }
 }

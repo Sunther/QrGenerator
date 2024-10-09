@@ -10,51 +10,76 @@
 
     <Grid RowDefinitions="*" ColumnDefinitions="*,*" Padding="30">
         <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
-            <Label
-                Text="SSID"
-                Style="{StaticResource Headline}" />
-            <Entry
-                x:Name="SsidEntry"
-                Text="{Binding Ssid}" />
+            <VerticalStackLayout Margin="20">
+                <Label
+                    HorizontalOptions="Start"
+                    Text="SSID"
+                    Style="{StaticResource Headline}" />
+                <Entry
+                    x:Name="SsidEntry"
+                    Text="{Binding Ssid}" />
+            </VerticalStackLayout>
 
-            <Label
-                Text="Password"
-                Style="{StaticResource Headline}" />
-            <Entry
-                x:Name="PasswordEntry"
-                Text="{Binding Password}" />
+            <VerticalStackLayout Margin="20">
+                <Label
+                    HorizontalOptions="Start"
+                    Text="Password"
+                    Style="{StaticResource Headline}" />
+                <Entry
+                    x:Name="PasswordEntry"
+                    Text="{Binding Password}" />
+            </VerticalStackLayout>
 
-            <Label
-                Text="Authentication Type"
-                Style="{StaticResource Headline}" />
+            <VerticalStackLayout Margin="20">
+                <Label
+                    HorizontalOptions="Start"
+                    Text="Authentication Type"
+                    Style="{StaticResource Headline}" />
+                
+                <Picker
+                    x:Name="AuthenticationPicker"
+                    ItemsSource="{Binding AuthenticationPickerSource}"
+                    SelectedItem="{Binding SelectedAuthenticationType}"/>
+            </VerticalStackLayout>
 
-            <Picker
-                x:Name="AuthenticationPicker"
-                ItemsSource="{Binding AuthenticationPickerSource}" />
-
-            <Label
-                Text="Image"
-                Style="{StaticResource Headline}" />
-            <Button
-                Text="Select an image"
-                x:Name="ImageSelectorButton"
-                Command="{Binding SelectImageCommand}"
-                />
+            <VerticalStackLayout Margin="20">
+                <Button
+                    Margin="30"
+                    Text="Select an image"
+                    x:Name="ImageSelectorButton"
+                    Command="{Binding SelectImageCommand}" />
+                <HorizontalStackLayout>
+                    <Label
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        Text="{Binding ImagePath}"
+                        FontSize="15"
+                        Style="{StaticResource SubHeadline}"
+                        Margin="0, 0, 20, 0" />
+                    <Image
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        Source="{Binding PreviewLogo}"
+                        HeightRequest="30"
+                        Aspect="AspectFit" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
         </VerticalStackLayout>
 
         <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center">
             <Image
                 Source="{Binding ImageQr}"
-                HeightRequest="185"
-                Aspect="AspectFit"
-                SemanticProperties.Description="dot net bot in a race car number eight" />
+                HeightRequest="300"
+                Aspect="AspectFit" />
 
             <HorizontalStackLayout>
                 <Button
+                    Margin="30"
                     Text="Visualize QR Code"
                     Command="{Binding VisualizeImageCommand}"
                     HorizontalOptions="Fill" />
                 <Button
+                    Margin="30"
                     Text="Save As SVG"
                     Command="{Binding GenerateImageCommand}"
                     HorizontalOptions="Fill" />

@@ -8,6 +8,7 @@ namespace QrGenerator.Application.QrCodeCoders;
 
 public class SvgQrCoder
 {
+    private const int QrCodeSize = 500;
     private readonly FileWriter _fileWriter;
 
     public SvgQrCoder()
@@ -26,7 +27,7 @@ public class SvgQrCoder
         {
             _fileWriter.CreateFile(
                 filePath,
-                qrCode.GetGraphic(20, Color.Black, Color.White, true, SizingMode.WidthHeightAttribute, ConvertToSvgLog(bitmap)));
+                qrCode.GetGraphic(QrCodeSize, Color.Black, Color.White, true, SizingMode.WidthHeightAttribute, ConvertToSvgLog(bitmap)));
         }
     }
 
@@ -45,7 +46,7 @@ public class SvgQrCoder
         {
             _fileWriter.CreateFile(
                 filePath,
-                qrCode.GetGraphic(20, Color.Black, Color.White, true, SizingMode.WidthHeightAttribute, ConvertToSvgLog(bitmap, ssid)));
+                qrCode.GetGraphic(QrCodeSize, Color.Black, Color.White, true, SizingMode.WidthHeightAttribute, ConvertToSvgLog(bitmap, ssid)));
 
         }
     }
