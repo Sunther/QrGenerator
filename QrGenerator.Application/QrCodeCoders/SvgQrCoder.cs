@@ -19,8 +19,10 @@ public class SvgQrCoder
     public void CreateBasicFile(
         string content,
         string filePath,
-        Bitmap? bitmap = null)
+        string? imagePath = null)
     {
+        var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
+
         using (var qrGenerator = new QRCodeGenerator())
         using (var qrCodeData = qrGenerator.CreateQrCode(content, QRCodeGenerator.ECCLevel.Q))
         using (var qrCode = new SvgQRCode(qrCodeData))
@@ -35,10 +37,15 @@ public class SvgQrCoder
         string ssid,
         string password,
         string filePath,
-        PayloadGenerator.WiFi.Authentication type = PayloadGenerator.WiFi.Authentication.WPA,
-        Bitmap? bitmap = null)
+        string? authType = null,
+        string? imagePath = null)
     {
-        var wifiPayload = new PayloadGenerator.WiFi(ssid, password, PayloadGenerator.WiFi.Authentication.WPA);
+        var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
+        var type = authType is null ?
+            PayloadGenerator.WiFi.Authentication.WPA :
+            Enum.Parse<PayloadGenerator.WiFi.Authentication>(authType);
+
+        var wifiPayload = new PayloadGenerator.WiFi(ssid, password, type);
 
         using (var qrGenerator = new QRCodeGenerator())
         using (var qrCodeData = qrGenerator.CreateQrCode(wifiPayload.ToString(), QRCodeGenerator.ECCLevel.Q))

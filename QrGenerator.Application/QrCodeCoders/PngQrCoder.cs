@@ -13,9 +13,9 @@ public class PngQrCoder
         string password,
         string filePath,
         string? authType = null,
-        Bitmap? bitmap = null)
+        string? imagePath = null)
     {
-        var bitmapQr = GetWiFiQr(ssid, password, authType, bitmap);
+        var bitmapQr = GetWiFiQr(ssid, password, authType, imagePath);
         bitmapQr.Save(filePath);
     }
 
@@ -23,10 +23,13 @@ public class PngQrCoder
         string ssid,
         string password,
         string? authType = null,
-        Bitmap? bitmap = null)
+        string? imagePath = null)
     {
-        var type = authType is null ? PayloadGenerator.WiFi.Authentication.WPA :
+        var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
+        var type = authType is null ?
+            PayloadGenerator.WiFi.Authentication.WPA :
             Enum.Parse<PayloadGenerator.WiFi.Authentication>(authType);
+
         Bitmap bitmapResult;
         var wifiPayload = new PayloadGenerator.WiFi(ssid, password, type);
 

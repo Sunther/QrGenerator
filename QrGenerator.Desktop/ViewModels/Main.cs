@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using QrGenerator.Application.QrCodeCoders;
 using QrGenerator.Disk;
 
@@ -9,7 +10,7 @@ namespace QrGenerator.Desktop.ViewModels
 {
     internal partial class Main : ObservableObject
     {
-        private const string DefaultPathSvg = "C:\\TEMP\\QR.svg";
+        private readonly string DefaultPathSvg = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.svg");
 
         [ObservableProperty]
         private ImageSource? _imageQr;
@@ -74,15 +75,16 @@ namespace QrGenerator.Desktop.ViewModels
 
         private void VisualizeImage()
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(Ssid);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(Password);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(ImagePath);
+            if (CheckParameters())
+            {
+                return;
+            }
 
             var bitmapQr = PngCode.GetWiFiQr(
                 Ssid,
                 Password,
                 SelectedAuthenticationType,
-                bitmap: new Bitmap(ImagePath));
+                ImagePath);
 
             using (var ms = new MemoryStream())
             {
@@ -95,17 +97,41 @@ namespace QrGenerator.Desktop.ViewModels
 
         private void GenerateSvgImage()
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(Ssid);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(Password);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(ImagePath);
+            if (CheckParameters())
+            {
+                return;
+            }
 
             SvgCode.CreateWiFiFile(
                 Ssid,
                 Password,
                 DefaultPathSvg,
-                bitmap: new Bitmap(ImagePath));
+                SelectedAuthenticationType,
+                ImagePath);
 
             ExplorerManagement.OpenFolderContainingFile(DefaultPathSvg);
+        }
+
+        private bool CheckParameters()
+        {
+            var listErrors = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(Ssid))
+            {
+                listErrors.Add("SSID cannot be empty.");
+            }
+
+            if (string.IsNullOrWhiteSpace(Password))
+            {
+                listErrors.Add("Password cannot be empty.");
+            }
+
+            if (listErrors.Count > 0)
+            {
+                WeakReferenceMessenger.Default.Send(string.Join(Environment.NewLine, listErrors));
+            }
+
+            return listErrors.Count > 0;
         }
     }
 }
