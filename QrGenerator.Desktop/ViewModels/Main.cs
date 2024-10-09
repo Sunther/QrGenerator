@@ -13,11 +13,13 @@ namespace QrGenerator.Desktop.ViewModels
         private readonly string DefaultPathSvg = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.svg");
 
         [ObservableProperty]
-        private ImageSource? _imageQr;
+        private ImageSource? _imageSourceQr;
         [ObservableProperty]
         private ImageSource? _previewLogo;
         [ObservableProperty]
         private string? _imagePath;
+        [ObservableProperty]
+        private bool _isImageLoading;
 
         private readonly SvgQrCoder SvgCode;
         private readonly PngQrCoder PngCode;
@@ -27,11 +29,13 @@ namespace QrGenerator.Desktop.ViewModels
         public IList<string> AuthenticationPickerSource { get; }
         public string SelectedAuthenticationType { get; set; }
         public ICommand SelectImageCommand { get; }
-        public ICommand VisualizeImageCommand { get; }
+        public ICommand DisplayImageCommand { get; }
         public ICommand GenerateImageCommand { get; }
 
         public Main()
         {
+            IsImageLoading = false;
+
             SvgCode = new SvgQrCoder();
             PngCode = new PngQrCoder();
 
@@ -44,8 +48,8 @@ namespace QrGenerator.Desktop.ViewModels
             };
 
             SelectImageCommand = new AsyncRelayCommand(SelectImage);
-            VisualizeImageCommand = new RelayCommand(VisualizeImage);
-            GenerateImageCommand = new RelayCommand(GenerateSvgImage);
+            DisplayImageCommand = new AsyncRelayCommand(DisplayImage);
+            GenerateImageCommand = new AsyncRelayCommand(GenerateSvgImage);
 
             SelectedAuthenticationType = "WPA";
         }
@@ -62,54 +66,67 @@ namespace QrGenerator.Desktop.ViewModels
             {
                 ImagePath = result.FullPath;
 
-                using (var ms = new MemoryStream())
-                using (var bitmap = new Bitmap(ImagePath))
+                await Task.Run(() =>
                 {
-                    bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    using (var ms = new MemoryStream())
+                    using (var bitmap = new Bitmap(ImagePath))
+                    {
+                        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+
+                        var stream = new MemoryStream(ms.ToArray());
+                        PreviewLogo = ImageSource.FromStream(() => stream);
+                    }
+                });
+            }
+        }
+
+        private async Task DisplayImage()
+        {
+            await Task.Run(() =>
+            {
+                if (CheckParameters())
+                {
+                    return;
+                }
+
+                IsImageLoading = true;
+
+                var bitmapQr = PngCode.GetWiFiQr(
+                    Ssid,
+                    Password,
+                    SelectedAuthenticationType,
+                    ImagePath);
+
+                using (var ms = new MemoryStream())
+                {
+                    bitmapQr.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
 
                     var stream = new MemoryStream(ms.ToArray());
-                    PreviewLogo = ImageSource.FromStream(() => stream);
+                    ImageSourceQr = ImageSource.FromStream(() => stream);
                 }
-            }
+
+                IsImageLoading = false;
+            });
         }
 
-        private void VisualizeImage()
+        private async Task GenerateSvgImage()
         {
-            if (CheckParameters())
+            await Task.Run(() =>
             {
-                return;
-            }
+                if (CheckParameters())
+                {
+                    return;
+                }
 
-            var bitmapQr = PngCode.GetWiFiQr(
-                Ssid,
-                Password,
-                SelectedAuthenticationType,
-                ImagePath);
+                SvgCode.CreateWiFiFile(
+                    Ssid,
+                    Password,
+                    DefaultPathSvg,
+                    SelectedAuthenticationType,
+                    ImagePath);
 
-            using (var ms = new MemoryStream())
-            {
-                bitmapQr.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-
-                var stream = new MemoryStream(ms.ToArray());
-                ImageQr = ImageSource.FromStream(() => stream);
-            }
-        }
-
-        private void GenerateSvgImage()
-        {
-            if (CheckParameters())
-            {
-                return;
-            }
-
-            SvgCode.CreateWiFiFile(
-                Ssid,
-                Password,
-                DefaultPathSvg,
-                SelectedAuthenticationType,
-                ImagePath);
-
-            ExplorerManagement.OpenFolderContainingFile(DefaultPathSvg);
+                ExplorerManagement.OpenFolderContainingFile(DefaultPathSvg);
+            });
         }
 
         private bool CheckParameters()

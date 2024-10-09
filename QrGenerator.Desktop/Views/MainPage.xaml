@@ -9,6 +9,7 @@
     </ContentPage.BindingContext>
 
     <Grid RowDefinitions="*" ColumnDefinitions="*,*" Padding="30">
+
         <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
             <VerticalStackLayout Margin="20">
                 <Label
@@ -35,7 +36,7 @@
                     HorizontalOptions="Start"
                     Text="Authentication Type"
                     Style="{StaticResource Headline}" />
-                
+
                 <Picker
                     x:Name="AuthenticationPicker"
                     ItemsSource="{Binding AuthenticationPickerSource}"
@@ -68,19 +69,35 @@
 
         <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center">
             <Image
-                Source="{Binding ImageQr}"
+                x:Name="QrImage"
+                Source="{Binding ImageSourceQr}"
                 HeightRequest="300"
                 Aspect="AspectFit" />
+
+            <ActivityIndicator
+                IsRunning="{Binding IsImageLoading}"
+                IsVisible="{Binding IsImageLoading}"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand">
+            </ActivityIndicator>
+            
+            <ActivityIndicator
+                IsRunning="{Binding Source={x:Reference QrImage}, Path=IsLoading}"
+                IsVisible="{Binding Source={x:Reference QrImage}, Path=IsLoading}"
+                BindingContext="{Binding Source={x:Reference QrImage}}"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand">
+            </ActivityIndicator>
 
             <HorizontalStackLayout>
                 <Button
                     Margin="30"
-                    Text="Visualize QR Code"
-                    Command="{Binding VisualizeImageCommand}"
+                    Text="Display QR"
+                    Command="{Binding DisplayImageCommand}"
                     HorizontalOptions="Fill" />
                 <Button
                     Margin="30"
-                    Text="Save As SVG"
+                    Text="Save as SVG"
                     Command="{Binding GenerateImageCommand}"
                     HorizontalOptions="Fill" />
             </HorizontalStackLayout>
