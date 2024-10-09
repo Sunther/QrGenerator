@@ -6,10 +6,5 @@
         {
             InitializeComponent();
         }
-
-        private void GenerateQrButton_Clicked(object sender, EventArgs e)
-        {
-
-        }
     }
 }

@@ -16,14 +16,14 @@
             <Entry
                 x:Name="SsidEntry"
                 Text="{Binding Ssid}" />
-            
+
             <Label
                 Text="Password"
                 Style="{StaticResource Headline}" />
             <Entry
                 x:Name="PasswordEntry"
                 Text="{Binding Password}" />
-            
+
             <Label
                 Text="Authentication Type"
                 Style="{StaticResource Headline}" />
@@ -49,11 +49,16 @@
                 Aspect="AspectFit"
                 SemanticProperties.Description="dot net bot in a race car number eight" />
 
-            <Button
-                x:Name="GenerateQrButton"
-                Text="Generate QR Code"
-                Command="{Binding GenerateImageCommand}"
-                HorizontalOptions="Fill" />
+            <HorizontalStackLayout>
+                <Button
+                    Text="Visualize QR Code"
+                    Command="{Binding VisualizeImageCommand}"
+                    HorizontalOptions="Fill" />
+                <Button
+                    Text="Save As SVG"
+                    Command="{Binding GenerateImageCommand}"
+                    HorizontalOptions="Fill" />
+            </HorizontalStackLayout>
         </VerticalStackLayout>
     </Grid>
 
