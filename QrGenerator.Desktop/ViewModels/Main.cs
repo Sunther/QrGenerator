@@ -17,12 +17,13 @@ namespace QrGenerator.Desktop.ViewModels
         [ObservableProperty]
         private ImageSource? _previewLogo;
         [ObservableProperty]
-        private string? _imagePath;
+        private string? _imageName;
         [ObservableProperty]
         private bool _isImageLoading;
 
-        private readonly SvgQrCoder SvgCode;
-        private readonly PngQrCoder PngCode;
+        private readonly SvgQrCoder _svgCode;
+        private readonly PngQrCoder _pngCode;
+        private string? _imagePath;
 
         public string? Ssid { get; set; }
         public string? Password { get; set; }
@@ -36,8 +37,8 @@ namespace QrGenerator.Desktop.ViewModels
         {
             IsImageLoading = false;
 
-            SvgCode = new SvgQrCoder();
-            PngCode = new PngQrCoder();
+            _svgCode = new SvgQrCoder();
+            _pngCode = new PngQrCoder();
 
             AuthenticationPickerSource = new List<string>()
             {
@@ -64,12 +65,13 @@ namespace QrGenerator.Desktop.ViewModels
 
             if (result is not null)
             {
-                ImagePath = result.FullPath;
+                _imagePath = result.FullPath;
+                ImageName = Path.GetFileName(_imagePath);
 
                 await Task.Run(() =>
                 {
                     using (var ms = new MemoryStream())
-                    using (var bitmap = new Bitmap(ImagePath))
+                    using (var bitmap = new Bitmap(_imagePath))
                     {
                         bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
 
@@ -91,11 +93,11 @@ namespace QrGenerator.Desktop.ViewModels
 
                 IsImageLoading = true;
 
-                var bitmapQr = PngCode.GetWiFiQr(
+                var bitmapQr = _pngCode.GetWiFiQr(
                     Ssid,
                     Password,
                     SelectedAuthenticationType,
-                    ImagePath);
+                    _imagePath);
 
                 using (var ms = new MemoryStream())
                 {
@@ -118,12 +120,12 @@ namespace QrGenerator.Desktop.ViewModels
                     return;
                 }
 
-                SvgCode.CreateWiFiFile(
+                _svgCode.CreateWiFiFile(
                     Ssid,
                     Password,
                     DefaultPathSvg,
                     SelectedAuthenticationType,
-                    ImagePath);
+                    _imagePath);
 
                 ExplorerManagement.OpenFolderContainingFile(DefaultPathSvg);
             });
