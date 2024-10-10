@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
-using System.Drawing.Text;
 using QRCoder;
+using QrGenerator.Application.Extensions;
 using QrGenerator.Disk;
 using static QRCoder.SvgQRCode;
 
@@ -8,6 +8,7 @@ namespace QrGenerator.Application.QrCodeCoders;
 
 public class SvgQrCoder
 {
+    private const int QrCodeSize = 500;
     private readonly FileWriter _fileWriter;
 
     public SvgQrCoder()
@@ -18,15 +19,17 @@ public class SvgQrCoder
     public void CreateBasicFile(
         string content,
         string filePath,
-        Bitmap? bitmap = null)
+        string? imagePath = null)
     {
+        var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
+
         using (var qrGenerator = new QRCodeGenerator())
         using (var qrCodeData = qrGenerator.CreateQrCode(content, QRCodeGenerator.ECCLevel.Q))
         using (var qrCode = new SvgQRCode(qrCodeData))
         {
             _fileWriter.CreateFile(
                 filePath,
-                qrCode.GetGraphic(20, Color.Black, Color.White, true, SizingMode.WidthHeightAttribute, ConvertToSvgLog(bitmap)));
+                qrCode.GetGraphic(QrCodeSize, Color.Black, Color.White, true, SizingMode.WidthHeightAttribute, ConvertToSvgLog(bitmap)));
         }
     }
 
@@ -34,10 +37,15 @@ public class SvgQrCoder
         string ssid,
         string password,
         string filePath,
-        PayloadGenerator.WiFi.Authentication type = PayloadGenerator.WiFi.Authentication.WPA,
-        Bitmap? bitmap = null)
+        string? authType = null,
+        string? imagePath = null)
     {
-        var wifiPayload = new PayloadGenerator.WiFi(ssid, password, PayloadGenerator.WiFi.Authentication.WPA);
+        var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
+        var type = authType is null ?
+            PayloadGenerator.WiFi.Authentication.WPA :
+            Enum.Parse<PayloadGenerator.WiFi.Authentication>(authType);
+
+        var wifiPayload = new PayloadGenerator.WiFi(ssid, password, type);
 
         using (var qrGenerator = new QRCodeGenerator())
         using (var qrCodeData = qrGenerator.CreateQrCode(wifiPayload.ToString(), QRCodeGenerator.ECCLevel.Q))
@@ -45,7 +53,7 @@ public class SvgQrCoder
         {
             _fileWriter.CreateFile(
                 filePath,
-                qrCode.GetGraphic(20, Color.Black, Color.White, true, SizingMode.WidthHeightAttribute, ConvertToSvgLog(bitmap, ssid)));
+                qrCode.GetGraphic(QrCodeSize, Color.Black, Color.White, true, SizingMode.WidthHeightAttribute, ConvertToSvgLog(bitmap, ssid)));
 
         }
     }
@@ -57,47 +65,8 @@ public class SvgQrCoder
             return null;
         }
 
-        var img = AddCaption(bitmap, ssid);
+        var img = bitmap.AddCaption(ssid);
 
         return new SvgLogo(img, fillLogoBackground: false);
-    }
-
-    private static Bitmap AddCaption(Bitmap bitmap, string? ssid, int textHeight = 50)
-    {
-        if (string.IsNullOrEmpty(ssid))
-        {
-            return bitmap;
-        }
-
-        // Create a new bitmap with a size of loaded image + rectangle for caption
-        var img = new Bitmap(bitmap.Width, bitmap.Height + textHeight);
-        var graphics = Graphics.FromImage(img);
-
-        // Draw the loaded image on newly created image
-        graphics.DrawImage(bitmap, 0, 0);
-
-        // Draw a rectangle for caption box
-        var rectangle = new Rectangle(0, bitmap.Height, bitmap.Width, textHeight);
-        graphics.DrawRectangle(
-                    new Pen(Color.White, 2),
-                    rectangle);
-        graphics.FillRectangle(
-                    new SolidBrush(Color.White),
-                    rectangle);
-
-        // Draw text
-        graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-        graphics.DrawString(
-                    ssid,
-                    new Font("Arial", 30, FontStyle.Regular),
-                    brush: new SolidBrush(Color.Black),
-                    layoutRectangle: rectangle,
-                    new StringFormat
-                    {
-                        Alignment = StringAlignment.Center,
-                        LineAlignment = StringAlignment.Center
-                    });
-
-        return img;
     }
 }

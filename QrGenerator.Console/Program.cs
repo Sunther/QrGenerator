@@ -21,7 +21,7 @@ public static class Program
             svgCode.CreateBasicFile(
                 args[0],
                 args[1],
-                new Bitmap(args[2]));
+                args[2]);
 
             ExplorerManagement.OpenFolderContainingFile(args[1]);
         }
@@ -31,7 +31,7 @@ public static class Program
                 args[0],
                 args[1],
                 args[2],
-                bitmap: new Bitmap(args[3]));
+                args[3]);
 
             ExplorerManagement.OpenFolderContainingFile(args[2]);
         }
