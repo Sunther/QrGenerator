@@ -19,6 +19,7 @@
                     Style="{StaticResource Headline}" />
                 <Entry
                     x:Name="SsidEntry"
+                    Style="{DynamicResource BaseEntry}"
                     Text="{Binding Ssid}" />
             </VerticalStackLayout>
 
@@ -29,6 +30,7 @@
                     Style="{StaticResource Headline}" />
                 <Entry
                     x:Name="PasswordEntry"
+                    Style="{DynamicResource BaseEntry}"
                     Text="{Binding Password}" />
             </VerticalStackLayout>
 

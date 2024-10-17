@@ -25,6 +25,7 @@ internal partial class SimpleQr : ObservableObject
     private string? _imagePath;
 
     public string? Content { get; set; }
+    public bool IsUrlChecked { get; set; }
     public ICommand SelectImageCommand { get; }
     public ICommand DisplayImageCommand { get; }
     public ICommand GenerateImageCommand { get; }
@@ -76,9 +77,20 @@ internal partial class SimpleQr : ObservableObject
 
             IsImageLoading = true;
 
-            var bitmapQr = PngQrCoder.GetQr(
-                Content,
-                _imagePath);
+            Bitmap bitmapQr;
+
+            if (IsUrlChecked)
+            {
+                bitmapQr = PngQrCoder.GetUrlQr(
+                    Content,
+                    _imagePath);
+            }
+            else
+            {
+                bitmapQr = PngQrCoder.GetQr(
+                    Content,
+                    _imagePath);
+            }
 
             using (var ms = new MemoryStream())
             {

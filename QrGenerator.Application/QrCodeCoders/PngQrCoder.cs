@@ -52,4 +52,23 @@ public static class PngQrCoder
 
         return bitmapResult;
     }
+
+    public static Bitmap GetUrlQr(
+        string? content,
+        string? imagePath = null)
+    {
+        ArgumentNullException.ThrowIfNull(content);
+        var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
+        var urlPayload = new PayloadGenerator.Url(content);
+
+        Bitmap bitmapResult;
+        using (var qrGenerator = new QRCodeGenerator())
+        using (var qrCodeData = qrGenerator.CreateQrCode(urlPayload.ToString(), QRCodeGenerator.ECCLevel.Q))
+        using (var qrCode = new QRCode(qrCodeData))
+        {
+            bitmapResult = qrCode.GetGraphic(QrCodeSize, Color.Black, Color.White, icon: bitmap?.AddCaption(content.GetDomain()));
+        }
+
+        return bitmapResult;
+    }
 }

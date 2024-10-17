@@ -19,7 +19,31 @@
                     Style="{StaticResource Headline}" />
                 <Entry
                     x:Name="ContentEntry"
+                    Style="{DynamicResource BaseEntry}"
                     Text="{Binding Content}" />
+                <CheckBox
+                    IsChecked="{Binding IsUrlChecked}"
+                    />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Margin="20">
+                <Button
+                    Margin="30"
+                    Text="Select an image"
+                    x:Name="ImageSelectorButton"
+                    Command="{Binding SelectImageCommand}" />
+
+                <HorizontalStackLayout HorizontalOptions="Center">
+                    <Label
+                        Text="{Binding ImageName}"
+                        FontSize="15"
+                        Style="{StaticResource SubHeadline}"
+                        Margin="0, 0, 20, 0" />
+                    <Image
+                        Source="{Binding PreviewLogo}"
+                        HeightRequest="30"
+                        Aspect="AspectFit" />
+                </HorizontalStackLayout>
             </VerticalStackLayout>
         </VerticalStackLayout>
 
