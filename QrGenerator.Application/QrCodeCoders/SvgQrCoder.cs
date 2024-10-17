@@ -17,10 +17,12 @@ public class SvgQrCoder
     }
 
     public void CreateBasicFile(
-        string content,
+        string? content,
         string filePath,
         string? imagePath = null)
     {
+        ArgumentNullException.ThrowIfNull(content);
+
         var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
 
         using (var qrGenerator = new QRCodeGenerator())
@@ -34,12 +36,15 @@ public class SvgQrCoder
     }
 
     public void CreateWiFiFile(
-        string ssid,
-        string password,
+        string? ssid,
+        string? password,
         string filePath,
         string? authType = null,
         string? imagePath = null)
     {
+        ArgumentNullException.ThrowIfNull(ssid);
+        ArgumentNullException.ThrowIfNull(password);
+
         var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
         var type = authType is null ?
             PayloadGenerator.WiFi.Authentication.WPA :

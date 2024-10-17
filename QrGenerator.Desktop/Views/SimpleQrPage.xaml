@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:QrGenerator.Desktop.ViewModels"
+             x:Class="QrGenerator.Desktop.Views.SimpleQrPage"
+             Title="SimpleQrPage">
+
+    <ContentPage.BindingContext>
+        <views:SimpleQr/>
+    </ContentPage.BindingContext>
+
+    <Grid RowDefinitions="*" ColumnDefinitions="*,*" Padding="30">
+
+        <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
+            <VerticalStackLayout Margin="20">
+                <Label
+                    HorizontalOptions="Start"
+                    Text="Content"
+                    Style="{StaticResource Headline}" />
+                <Entry
+                    x:Name="ContentEntry"
+                    Text="{Binding Content}" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center">
+            <Image
+                x:Name="QrImage"
+                Source="{Binding ImageSourceQr}"
+                HeightRequest="300"
+                Aspect="AspectFit" />
+
+            <ActivityIndicator
+                IsRunning="{Binding IsImageLoading}"
+                IsVisible="{Binding IsImageLoading}"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand">
+            </ActivityIndicator>
+
+            <ActivityIndicator
+                IsRunning="{Binding Source={x:Reference QrImage}, Path=IsLoading}"
+                IsVisible="{Binding Source={x:Reference QrImage}, Path=IsLoading}"
+                BindingContext="{Binding Source={x:Reference QrImage}}"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalOptions="CenterAndExpand">
+            </ActivityIndicator>
+
+            <HorizontalStackLayout>
+                <Button
+                    Margin="30"
+                    Text="Display QR"
+                    Command="{Binding DisplayImageCommand}"
+                    HorizontalOptions="Fill" />
+                <Button
+                    Margin="30"
+                    Text="Save as SVG"
+                    Command="{Binding GenerateImageCommand}"
+                    HorizontalOptions="Fill" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>
