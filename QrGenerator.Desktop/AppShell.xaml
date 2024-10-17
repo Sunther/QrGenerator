@@ -7,9 +7,15 @@
     Shell.FlyoutBehavior="Disabled"
     Title="QrGenerator">
 
-    <!--Title="Home"-->
-    <ShellContent
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <TabBar>
+        <ShellContent
+            Title="Simple QR"
+            ContentTemplate="{DataTemplate local:SimpleQrPage}"
+            Route="MainPage" />
+
+        <ShellContent
+            Title="WiFi QR"
+            ContentTemplate="{DataTemplate local:WiFiQrPage}" />
+    </TabBar>
 
 </Shell>
