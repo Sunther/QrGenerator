@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -11,32 +10,31 @@ namespace QrGenerator.Desktop.ViewModels;
 internal partial class SimpleQr : ObservableObject
 {
     private readonly string DefaultPathSvg = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.svg");
+    private readonly string DefaultPathPngTemp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.png");
 
-    [ObservableProperty]
-    private ImageSource? _imageSourceQr;
     [ObservableProperty]
     private ImageSource? _previewLogo;
     [ObservableProperty]
     private string? _imageName;
-    [ObservableProperty]
-    private bool _isImageLoading;
 
     private readonly SvgQrCoder _svgCode;
+    private readonly FileWriter _fileWriter;
     private string? _imagePath;
 
     public string? Content { get; set; }
     public bool IsUrlChecked { get; set; }
-    public ICommand SelectImageCommand { get; }
-    public ICommand DisplayImageCommand { get; }
-    public ICommand GenerateImageCommand { get; }
+    public IAsyncRelayCommand SelectImageCommand { get; }
+    public IAsyncRelayCommand DisplayWiFiImageCommand { get; }
+    public IAsyncRelayCommand SaveWiFiImageCommand { get; }
 
     public SimpleQr()
     {
         _svgCode = new SvgQrCoder();
+        _fileWriter = new FileWriter();
 
         SelectImageCommand = new AsyncRelayCommand(SelectImage);
-        DisplayImageCommand = new AsyncRelayCommand(DisplayImage);
-        GenerateImageCommand = new AsyncRelayCommand(GenerateSvgImage);
+        DisplayWiFiImageCommand = new AsyncRelayCommand(DisplayImage);
+        SaveWiFiImageCommand = new AsyncRelayCommand(GenerateSvgImage);
     }
 
     private async Task SelectImage()
@@ -75,32 +73,11 @@ internal partial class SimpleQr : ObservableObject
                 return;
             }
 
-            IsImageLoading = true;
+            var bitmapQr = IsUrlChecked ?
+                PngQrCoder.GetUrlQr(Content, _imagePath) :
+                PngQrCoder.GetQr(Content, _imagePath);
 
-            Bitmap bitmapQr;
-
-            if (IsUrlChecked)
-            {
-                bitmapQr = PngQrCoder.GetUrlQr(
-                    Content,
-                    _imagePath);
-            }
-            else
-            {
-                bitmapQr = PngQrCoder.GetQr(
-                    Content,
-                    _imagePath);
-            }
-
-            using (var ms = new MemoryStream())
-            {
-                bitmapQr.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-
-                var stream = new MemoryStream(ms.ToArray());
-                ImageSourceQr = ImageSource.FromStream(() => stream);
-            }
-
-            IsImageLoading = false;
+            _fileWriter.CreateFile(DefaultPathPngTemp, bitmapQr);
         });
     }
 
@@ -117,8 +94,6 @@ internal partial class SimpleQr : ObservableObject
                 Content,
                 DefaultPathSvg,
                 _imagePath);
-
-            ExplorerManagement.OpenFolderContainingFile(DefaultPathSvg);
         });
     }
 
@@ -133,7 +108,10 @@ internal partial class SimpleQr : ObservableObject
 
         if (listErrors.Count > 0)
         {
-            WeakReferenceMessenger.Default.Send(string.Join(Environment.NewLine, listErrors));
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                WeakReferenceMessenger.Default.Send(string.Join(Environment.NewLine, listErrors));
+            });
         }
 
         return listErrors.Count > 0;

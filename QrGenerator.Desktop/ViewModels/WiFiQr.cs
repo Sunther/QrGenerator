@@ -4,39 +4,35 @@ using CommunityToolkit.Mvvm.Messaging;
 using QrGenerator.Application.QrCodeCoders;
 using QrGenerator.Disk;
 using System.Drawing;
-using System.Windows.Input;
 
 namespace QrGenerator.Desktop.ViewModels;
 
 internal partial class WiFiQR : ObservableObject
 {
     private readonly string DefaultPathSvg = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.svg");
+    private readonly string DefaultPathPngTemp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.png");
 
-    [ObservableProperty]
-    private ImageSource? _imageSourceQr;
     [ObservableProperty]
     private ImageSource? _previewLogo;
     [ObservableProperty]
     private string? _imageName;
-    [ObservableProperty]
-    private bool _isImageLoading;
 
     private readonly SvgQrCoder _svgCode;
+    private readonly FileWriter _fileWriter;
     private string? _imagePath;
 
     public string? Ssid { get; set; }
     public string? Password { get; set; }
     public IList<string> AuthenticationPickerSource { get; }
     public string SelectedAuthenticationType { get; set; }
-    public ICommand SelectImageCommand { get; }
-    public ICommand DisplayImageCommand { get; }
-    public ICommand GenerateImageCommand { get; }
+    public IAsyncRelayCommand SelectImageCommand { get; }
+    public IAsyncRelayCommand DisplayWiFiImageCommand { get; }
+    public IAsyncRelayCommand SaveWiFiImageCommand { get; }
 
     public WiFiQR()
     {
-        IsImageLoading = false;
-
         _svgCode = new SvgQrCoder();
+        _fileWriter = new FileWriter();
 
         AuthenticationPickerSource = new List<string>()
             {
@@ -47,8 +43,8 @@ internal partial class WiFiQR : ObservableObject
             };
 
         SelectImageCommand = new AsyncRelayCommand(SelectImage);
-        DisplayImageCommand = new AsyncRelayCommand(DisplayImage);
-        GenerateImageCommand = new AsyncRelayCommand(GenerateSvgImage);
+        DisplayWiFiImageCommand = new AsyncRelayCommand(DisplayWifiImage);
+        SaveWiFiImageCommand = new AsyncRelayCommand(SaveSvgWifiImage);
 
         SelectedAuthenticationType = "WPA";
     }
@@ -80,7 +76,7 @@ internal partial class WiFiQR : ObservableObject
         }
     }
 
-    private async Task DisplayImage()
+    private async Task DisplayWifiImage()
     {
         await Task.Run(() =>
         {
@@ -89,27 +85,17 @@ internal partial class WiFiQR : ObservableObject
                 return;
             }
 
-            IsImageLoading = true;
+            var bitmap = PngQrCoder.GetWiFiQr(
+                    Ssid,
+                    Password,
+                    SelectedAuthenticationType,
+                    _imagePath);
 
-            var bitmapQr = PngQrCoder.GetWiFiQr(
-                Ssid,
-                Password,
-                SelectedAuthenticationType,
-                _imagePath);
-
-            using (var ms = new MemoryStream())
-            {
-                bitmapQr.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-
-                var stream = new MemoryStream(ms.ToArray());
-                ImageSourceQr = ImageSource.FromStream(() => stream);
-            }
-
-            IsImageLoading = false;
+            _fileWriter.CreateFile(DefaultPathPngTemp, bitmap);
         });
     }
 
-    private async Task GenerateSvgImage()
+    private async Task SaveSvgWifiImage()
     {
         await Task.Run(() =>
         {
@@ -124,8 +110,6 @@ internal partial class WiFiQR : ObservableObject
                 DefaultPathSvg,
                 SelectedAuthenticationType,
                 _imagePath);
-
-            ExplorerManagement.OpenFolderContainingFile(DefaultPathSvg);
         });
     }
 
@@ -145,7 +129,10 @@ internal partial class WiFiQR : ObservableObject
 
         if (listErrors.Count > 0)
         {
-            WeakReferenceMessenger.Default.Send(string.Join(Environment.NewLine, listErrors));
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                WeakReferenceMessenger.Default.Send(string.Join(Environment.NewLine, listErrors));
+            });
         }
 
         return listErrors.Count > 0;

@@ -12,7 +12,6 @@
         <ShellContent Title="Simple QR">
             <views:SimpleQrPage />
         </ShellContent>
-
         <ShellContent Title="WiFi QR">
             <views:WiFiQrPage />
         </ShellContent>
