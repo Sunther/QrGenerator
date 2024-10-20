@@ -13,7 +13,7 @@
     <Grid RowDefinitions="*" ColumnDefinitions="*,*" Padding="30">
 
         <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
-            <VerticalStackLayout Margin="20">
+            <VerticalStackLayout Margin="0,0,0,20">
                 <Label
                     HorizontalOptions="Start"
                     Text="SSID"
@@ -24,7 +24,7 @@
                     Text="{Binding Ssid}" />
             </VerticalStackLayout>
 
-            <VerticalStackLayout Margin="20">
+            <VerticalStackLayout Margin="0,0,0,20">
                 <Label
                     HorizontalOptions="Start"
                     Text="Password"
@@ -35,7 +35,7 @@
                     Text="{Binding Password}" />
             </VerticalStackLayout>
 
-            <VerticalStackLayout Margin="20">
+            <VerticalStackLayout Margin="0,0,0,20">
                 <Label
                     HorizontalOptions="Start"
                     Text="Authentication Type"

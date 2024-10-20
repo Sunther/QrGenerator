@@ -11,9 +11,8 @@
     </ContentPage.BindingContext>
 
     <Grid RowDefinitions="*" ColumnDefinitions="*,*" Padding="30">
-
         <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
-            <VerticalStackLayout Margin="20">
+            <VerticalStackLayout Margin="0,0,0,20">
                 <Label
                     HorizontalOptions="Start"
                     Text="Content"
@@ -22,10 +21,12 @@
                     x:Name="ContentEntry"
                     Style="{DynamicResource BaseEntry}"
                     Text="{Binding Content}" />
-                <CheckBox
-                    IsChecked="{Binding IsUrlChecked}"
-                    />
             </VerticalStackLayout>
+
+            <HorizontalStackLayout>
+                <CheckBox IsChecked="{Binding IsUrlChecked}" />
+                <Label Text="Is Url?" HorizontalOptions="Center" VerticalOptions="Center" />
+            </HorizontalStackLayout>
 
             <contentviews:PreviewLogo
                 LogoPath="{Binding ImagePath, Mode=TwoWay}"

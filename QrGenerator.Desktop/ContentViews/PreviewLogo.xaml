@@ -3,27 +3,35 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="QrGenerator.Desktop.ContentViews.PreviewLogo">
 
-    <VerticalStackLayout Margin="20">
+    <VerticalStackLayout>
+        <HorizontalStackLayout>
+            <CheckBox x:Name="HasLogoCheckbox" CheckedChanged="CheckBox_CheckedChanged" />
+            <Label Text="Has logo?" HorizontalOptions="Center" VerticalOptions="Center" />
+        </HorizontalStackLayout>
         <Button
             x:Name="ImageSelectorButton"
             Margin="30"
-            Text="Select an image"
+            Text="Select an image for a logo"
             Clicked="ImageSelectorButton_Clicked"
+            IsVisible="False"
             />
 
-        <HorizontalStackLayout HorizontalOptions="Center">
+        <HorizontalStackLayout
+            HorizontalOptions="Center">
             <Label
                 x:Name="LogoNameLabel"
                 FontSize="15"
                 Style="{StaticResource SubHeadline}"
                 Margin="0, 0, 20, 0"
+                IsVisible="False"
                 />
             <Image
                 x:Name="LogoPreview"
                 HeightRequest="30"
                 Aspect="AspectFit"
+                IsVisible="False"
                 />
         </HorizontalStackLayout>
     </VerticalStackLayout>
-    
+
 </ContentView>

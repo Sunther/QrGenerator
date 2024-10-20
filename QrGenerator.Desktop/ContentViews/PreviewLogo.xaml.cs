@@ -45,4 +45,20 @@ public partial class PreviewLogo : ContentView
             });
         }
     }
+
+    private void CheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        if (HasLogoCheckbox.IsChecked)
+        {
+            ImageSelectorButton.IsVisible = true;
+            LogoNameLabel.IsVisible = true;
+            LogoPreview.IsVisible = true;
+        }
+        else
+        {
+            ImageSelectorButton.IsVisible = false;
+            LogoNameLabel.IsVisible = false;
+            LogoPreview.IsVisible = false;
+        }
+    }
 }
