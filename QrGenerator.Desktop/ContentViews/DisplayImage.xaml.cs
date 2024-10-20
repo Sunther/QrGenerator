@@ -44,20 +44,23 @@ public partial class DisplayImage : ContentView
 
         await DisplayCommand.ExecuteAsync(null);
 
-        await Task.Run(() =>
+        if (BitmapQr is not null)
         {
-            using (var ms = new MemoryStream())
+            await Task.Run(() =>
             {
-                BitmapQr.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-
-                var stream = new MemoryStream(ms.ToArray());
-
-                Dispatcher.Dispatch(() =>
+                using (var ms = new MemoryStream())
                 {
-                    QrImage.Source = ImageSource.FromStream(() => stream);
-                });
-            }
-        });
+                    BitmapQr.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+
+                    var stream = new MemoryStream(ms.ToArray());
+
+                    Dispatcher.Dispatch(() =>
+                    {
+                        QrImage.Source = ImageSource.FromStream(() => stream);
+                    });
+                }
+            });
+        }
 
         Dispatcher.Dispatch(() =>
         {

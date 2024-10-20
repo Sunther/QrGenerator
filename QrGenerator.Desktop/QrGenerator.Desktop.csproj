@@ -59,6 +59,9 @@
 	  <MauiXaml Update="ContentViews\DisplayImage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="ContentViews\PreviewLogo.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\SimpleQrPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -69,6 +72,9 @@
 
 	<ItemGroup>
 	  <None Update="ContentViews\DisplayImage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </None>
+	  <None Update="ContentViews\PreviewLogo.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </None>
 	  <None Update="Views\SimpleQrPage.xaml">
