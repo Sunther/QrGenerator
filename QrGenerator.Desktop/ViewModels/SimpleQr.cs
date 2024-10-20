@@ -8,8 +8,6 @@ namespace QrGenerator.Desktop.ViewModels;
 
 internal partial class SimpleQr : ObservableObject
 {
-    private readonly string DefaultPathSvg = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.svg");
-
     [ObservableProperty]
     private Bitmap? _bitmapQrPreview;
     [ObservableProperty]

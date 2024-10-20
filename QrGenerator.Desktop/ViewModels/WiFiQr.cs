@@ -8,8 +8,6 @@ namespace QrGenerator.Desktop.ViewModels;
 
 internal partial class WiFiQR : ObservableObject
 {
-    private readonly string DefaultPathSvg = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.svg");
-
     [ObservableProperty]
     private Bitmap? _bitmapQrPreview;
     [ObservableProperty]
@@ -71,9 +69,8 @@ internal partial class WiFiQR : ObservableObject
             _svgCode.CreateWiFiFile(
                 Ssid,
                 Password,
-                DefaultPathSvg,
-                SelectedAuthenticationType,
-                ImagePath);
+                authType: SelectedAuthenticationType,
+                imagePath: ImagePath);
         });
     }
 
