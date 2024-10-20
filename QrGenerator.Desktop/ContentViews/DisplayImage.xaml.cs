@@ -7,10 +7,10 @@ namespace QrGenerator.Desktop.ContentViews;
 public partial class DisplayImage : ContentView
 {
     private readonly string DefaultPathSvg = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.svg");
-    private readonly string DefaultPathPngTemp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.png");
 
     public static readonly BindableProperty DisplayCommandProperty = BindableProperty.Create(nameof(DisplayCommand), typeof(IAsyncRelayCommand), typeof(DisplayImage), null);
     public static readonly BindableProperty SaveCommandProperty = BindableProperty.Create(nameof(SaveCommand), typeof(IAsyncRelayCommand), typeof(DisplayImage), null);
+    public static readonly BindableProperty BitmapQrProperty = BindableProperty.Create(nameof(BitmapQr), typeof(Bitmap), typeof(DisplayImage), null);
 
     public IAsyncRelayCommand DisplayCommand
     {
@@ -21,6 +21,11 @@ public partial class DisplayImage : ContentView
     {
         get => (IAsyncRelayCommand)GetValue(SaveCommandProperty);
         set => SetValue(SaveCommandProperty, value);
+    }
+    public Bitmap BitmapQr
+    {
+        get => (Bitmap)GetValue(BitmapQrProperty);
+        set => SetValue(BitmapQrProperty, value);
     }
 
     public DisplayImage()
@@ -41,22 +46,16 @@ public partial class DisplayImage : ContentView
 
         await Task.Run(() =>
         {
-            if (File.Exists(DefaultPathPngTemp))
+            using (var ms = new MemoryStream())
             {
-                using (var bitmapQr = new Bitmap(DefaultPathPngTemp))
-                using (var ms = new MemoryStream())
+                BitmapQr.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+
+                var stream = new MemoryStream(ms.ToArray());
+
+                Dispatcher.Dispatch(() =>
                 {
-                    bitmapQr.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-
-                    var stream = new MemoryStream(ms.ToArray());
-
-                    Dispatcher.Dispatch(() =>
-                    {
-                        QrImage.Source = ImageSource.FromStream(() => stream);
-                    });
-                }
-
-                File.Delete(DefaultPathPngTemp);
+                    QrImage.Source = ImageSource.FromStream(() => stream);
+                });
             }
         });
 

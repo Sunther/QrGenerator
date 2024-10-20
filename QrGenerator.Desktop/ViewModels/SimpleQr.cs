@@ -1,24 +1,23 @@
-﻿using System.Drawing;
+using System.Drawing;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using QrGenerator.Application.QrCodeCoders;
-using QrGenerator.Disk;
 
 namespace QrGenerator.Desktop.ViewModels;
 
 internal partial class SimpleQr : ObservableObject
 {
     private readonly string DefaultPathSvg = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.svg");
-    private readonly string DefaultPathPngTemp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.png");
 
     [ObservableProperty]
     private ImageSource? _previewLogo;
     [ObservableProperty]
     private string? _imageName;
+    [ObservableProperty]
+    private Bitmap? _bitmapQrPreview;
 
     private readonly SvgQrCoder _svgCode;
-    private readonly FileWriter _fileWriter;
     private string? _imagePath;
 
     public string? Content { get; set; }
@@ -30,7 +29,6 @@ internal partial class SimpleQr : ObservableObject
     public SimpleQr()
     {
         _svgCode = new SvgQrCoder();
-        _fileWriter = new FileWriter();
 
         SelectImageCommand = new AsyncRelayCommand(SelectImage);
         DisplayWiFiImageCommand = new AsyncRelayCommand(DisplayImage);
@@ -73,11 +71,9 @@ internal partial class SimpleQr : ObservableObject
                 return;
             }
 
-            var bitmapQr = IsUrlChecked ?
+            BitmapQrPreview = IsUrlChecked ?
                 PngQrCoder.GetUrlQr(Content, _imagePath) :
                 PngQrCoder.GetQr(Content, _imagePath);
-
-            _fileWriter.CreateFile(DefaultPathPngTemp, bitmapQr);
         });
     }
 

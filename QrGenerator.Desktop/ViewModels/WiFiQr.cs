@@ -1,8 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using QrGenerator.Application.QrCodeCoders;
-using QrGenerator.Disk;
 using System.Drawing;
 
 namespace QrGenerator.Desktop.ViewModels;
@@ -10,15 +9,15 @@ namespace QrGenerator.Desktop.ViewModels;
 internal partial class WiFiQR : ObservableObject
 {
     private readonly string DefaultPathSvg = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.svg");
-    private readonly string DefaultPathPngTemp = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.png");
 
     [ObservableProperty]
     private ImageSource? _previewLogo;
     [ObservableProperty]
     private string? _imageName;
+    [ObservableProperty]
+    private Bitmap? _bitmapQrPreview;
 
     private readonly SvgQrCoder _svgCode;
-    private readonly FileWriter _fileWriter;
     private string? _imagePath;
 
     public string? Ssid { get; set; }
@@ -32,7 +31,6 @@ internal partial class WiFiQR : ObservableObject
     public WiFiQR()
     {
         _svgCode = new SvgQrCoder();
-        _fileWriter = new FileWriter();
 
         AuthenticationPickerSource = new List<string>()
             {
@@ -85,13 +83,11 @@ internal partial class WiFiQR : ObservableObject
                 return;
             }
 
-            var bitmap = PngQrCoder.GetWiFiQr(
+            BitmapQrPreview = PngQrCoder.GetWiFiQr(
                     Ssid,
                     Password,
                     SelectedAuthenticationType,
                     _imagePath);
-
-            _fileWriter.CreateFile(DefaultPathPngTemp, bitmap);
         });
     }
 

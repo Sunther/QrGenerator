@@ -74,6 +74,7 @@
             VerticalOptions="Center"
             DisplayCommand="{Binding DisplayWiFiImageCommand}"
             SaveCommand="{Binding SaveWiFiImageCommand}"
+            BitmapQr="{Binding BitmapQrPreview}"
             />
     </Grid>
 </ContentPage>
