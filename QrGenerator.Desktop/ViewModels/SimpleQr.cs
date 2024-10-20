@@ -52,10 +52,14 @@ internal partial class SimpleQr : ObservableObject
 
         await Task.Run(() =>
         {
-            _svgCode.CreateBasicFile(
-                Content,
-                DefaultPathSvg,
-                ImagePath);
+            if (IsUrlChecked)
+            {
+                _svgCode.CreateUrlFile(Content, imagePath: ImagePath);
+            }
+            else
+            {
+                _svgCode.CreateBasicFile(Content, imagePath: ImagePath);
+            }
         });
     }
 
