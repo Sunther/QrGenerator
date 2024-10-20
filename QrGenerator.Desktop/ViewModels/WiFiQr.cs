@@ -1,41 +1,29 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using QrGenerator.Application.QrCodeCoders;
-using QrGenerator.Disk;
 using System.Drawing;
-using System.Windows.Input;
 
 namespace QrGenerator.Desktop.ViewModels;
 
 internal partial class WiFiQR : ObservableObject
 {
-    private readonly string DefaultPathSvg = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.svg");
-
     [ObservableProperty]
-    private ImageSource? _imageSourceQr;
+    private Bitmap? _bitmapQrPreview;
     [ObservableProperty]
-    private ImageSource? _previewLogo;
-    [ObservableProperty]
-    private string? _imageName;
-    [ObservableProperty]
-    private bool _isImageLoading;
+    private string? _imagePath;
 
     private readonly SvgQrCoder _svgCode;
-    private string? _imagePath;
 
     public string? Ssid { get; set; }
     public string? Password { get; set; }
     public IList<string> AuthenticationPickerSource { get; }
     public string SelectedAuthenticationType { get; set; }
-    public ICommand SelectImageCommand { get; }
-    public ICommand DisplayImageCommand { get; }
-    public ICommand GenerateImageCommand { get; }
+    public IAsyncRelayCommand DisplayWiFiImageCommand { get; }
+    public IAsyncRelayCommand SaveWiFiImageCommand { get; }
 
     public WiFiQR()
     {
-        IsImageLoading = false;
-
         _svgCode = new SvgQrCoder();
 
         AuthenticationPickerSource = new List<string>()
@@ -46,86 +34,43 @@ internal partial class WiFiQR : ObservableObject
                 "WPA2"
             };
 
-        SelectImageCommand = new AsyncRelayCommand(SelectImage);
-        DisplayImageCommand = new AsyncRelayCommand(DisplayImage);
-        GenerateImageCommand = new AsyncRelayCommand(GenerateSvgImage);
+        DisplayWiFiImageCommand = new AsyncRelayCommand(DisplayWifiImage);
+        SaveWiFiImageCommand = new AsyncRelayCommand(SaveSvgWifiImage);
 
         SelectedAuthenticationType = "WPA";
     }
 
-    private async Task SelectImage()
+    private async Task DisplayWifiImage()
     {
-        var result = await FilePicker.Default.PickAsync(new PickOptions
+        if (CheckParameters())
         {
-            FileTypes = FilePickerFileType.Images,
-            PickerTitle = "Select an image"
-        });
-
-        if (result is not null)
-        {
-            _imagePath = result.FullPath;
-            ImageName = Path.GetFileName(_imagePath);
-
-            await Task.Run(() =>
-            {
-                using (var ms = new MemoryStream())
-                using (var bitmap = new Bitmap(_imagePath))
-                {
-                    bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-
-                    var stream = new MemoryStream(ms.ToArray());
-                    PreviewLogo = ImageSource.FromStream(() => stream);
-                }
-            });
+            return;
         }
-    }
 
-    private async Task DisplayImage()
-    {
         await Task.Run(() =>
         {
-            if (CheckParameters())
-            {
-                return;
-            }
-
-            IsImageLoading = true;
-
-            var bitmapQr = PngQrCoder.GetWiFiQr(
-                Ssid,
-                Password,
-                SelectedAuthenticationType,
-                _imagePath);
-
-            using (var ms = new MemoryStream())
-            {
-                bitmapQr.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-
-                var stream = new MemoryStream(ms.ToArray());
-                ImageSourceQr = ImageSource.FromStream(() => stream);
-            }
-
-            IsImageLoading = false;
+            BitmapQrPreview = PngQrCoder.GetWiFiQr(
+                    Ssid,
+                    Password,
+                    SelectedAuthenticationType,
+                    ImagePath);
         });
     }
 
-    private async Task GenerateSvgImage()
+    private async Task SaveSvgWifiImage()
     {
+        if (CheckParameters())
+        {
+            return;
+        }
+
         await Task.Run(() =>
         {
-            if (CheckParameters())
-            {
-                return;
-            }
-
             _svgCode.CreateWiFiFile(
                 Ssid,
                 Password,
-                DefaultPathSvg,
-                SelectedAuthenticationType,
-                _imagePath);
-
-            ExplorerManagement.OpenFolderContainingFile(DefaultPathSvg);
+                authType: SelectedAuthenticationType,
+                imagePath: ImagePath);
         });
     }
 
@@ -145,7 +90,10 @@ internal partial class WiFiQR : ObservableObject
 
         if (listErrors.Count > 0)
         {
-            WeakReferenceMessenger.Default.Send(string.Join(Environment.NewLine, listErrors));
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                WeakReferenceMessenger.Default.Send(string.Join(Environment.NewLine, listErrors));
+            });
         }
 
         return listErrors.Count > 0;

@@ -8,6 +8,8 @@ namespace QrGenerator.Application.QrCodeCoders;
 
 public class SvgQrCoder
 {
+    private readonly string DefaultPathSvg = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads", "QR.svg");
+
     private const int QrCodeSize = 500;
     private readonly FileWriter _fileWriter;
 
@@ -18,10 +20,11 @@ public class SvgQrCoder
 
     public void CreateBasicFile(
         string? content,
-        string filePath,
+        string? filePath = null,
         string? imagePath = null)
     {
         ArgumentNullException.ThrowIfNull(content);
+        filePath ??= DefaultPathSvg;
 
         var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
 
@@ -38,12 +41,13 @@ public class SvgQrCoder
     public void CreateWiFiFile(
         string? ssid,
         string? password,
-        string filePath,
+        string? filePath = null,
         string? authType = null,
         string? imagePath = null)
     {
         ArgumentNullException.ThrowIfNull(ssid);
         ArgumentNullException.ThrowIfNull(password);
+        filePath ??= DefaultPathSvg;
 
         var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
         var type = authType is null ?
@@ -66,10 +70,11 @@ public class SvgQrCoder
 
     public void CreateUrlFile(
         string? content,
-        string filePath,
+        string? filePath = null,
         string? imagePath = null)
     {
         ArgumentNullException.ThrowIfNull(content);
+        filePath ??= DefaultPathSvg;
         var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
         var urlPayload = new PayloadGenerator.Url(content);
 

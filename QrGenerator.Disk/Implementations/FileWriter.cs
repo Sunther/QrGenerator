@@ -1,4 +1,6 @@
-﻿namespace QrGenerator.Disk;
+﻿using System.Drawing;
+
+namespace QrGenerator.Disk;
 
 public class FileWriter
 {
@@ -10,5 +12,15 @@ public class FileWriter
         }
 
         File.WriteAllText(filePath, content);
+    }
+
+    public void CreateFile(string filePath, Bitmap bitmap)
+    {
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
+
+        bitmap.Save(filePath);
     }
 }

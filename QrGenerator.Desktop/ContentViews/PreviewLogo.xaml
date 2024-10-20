@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="QrGenerator.Desktop.ContentViews.PreviewLogo">
+
+    <VerticalStackLayout Margin="20">
+        <Button
+            x:Name="ImageSelectorButton"
+            Margin="30"
+            Text="Select an image"
+            Clicked="ImageSelectorButton_Clicked"
+            />
+
+        <HorizontalStackLayout HorizontalOptions="Center">
+            <Label
+                x:Name="LogoNameLabel"
+                FontSize="15"
+                Style="{StaticResource SubHeadline}"
+                Margin="0, 0, 20, 0"
+                />
+            <Image
+                x:Name="LogoPreview"
+                HeightRequest="30"
+                Aspect="AspectFit"
+                />
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+    
+</ContentView>

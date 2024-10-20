@@ -3,19 +3,18 @@
     x:Class="QrGenerator.Desktop.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:QrGenerator.Desktop.Views"
+    xmlns:views="clr-namespace:QrGenerator.Desktop.Views"
     Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False"
     Title="QrGenerator">
 
     <TabBar>
-        <ShellContent
-            Title="Simple QR"
-            ContentTemplate="{DataTemplate local:SimpleQrPage}"
-            Route="MainPage" />
-
-        <ShellContent
-            Title="WiFi QR"
-            ContentTemplate="{DataTemplate local:WiFiQrPage}" />
+        <ShellContent Title="Simple QR">
+            <views:SimpleQrPage />
+        </ShellContent>
+        <ShellContent Title="WiFi QR">
+            <views:WiFiQrPage />
+        </ShellContent>
     </TabBar>
 
 </Shell>
