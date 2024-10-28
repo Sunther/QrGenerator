@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:QrGenerator.Desktop.ViewModels"
              xmlns:contentviews="clr-namespace:QrGenerator.Desktop.ContentViews"
+             xmlns:languageresources="clr-namespace:QrGenerator.Desktop.Resources.LanguageResources"
              x:Class="QrGenerator.Desktop.Views.SimpleQrPage"
              Title="SimpleQrPage">
 
@@ -15,7 +16,7 @@
             <VerticalStackLayout Margin="0,0,0,20">
                 <Label
                     HorizontalOptions="Start"
-                    Text="Content"
+                    Text="{x:Static languageresources:LanguageLiterals.Content}"
                     Style="{StaticResource Headline}" />
                 <Entry
                     x:Name="ContentEntry"
@@ -25,7 +26,10 @@
 
             <HorizontalStackLayout>
                 <CheckBox IsChecked="{Binding IsUrlChecked}" />
-                <Label Text="Is Url?" HorizontalOptions="Center" VerticalOptions="Center" />
+                <Label
+                    Text="{x:Static languageresources:LanguageLiterals.IsUrl}"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center" />
             </HorizontalStackLayout>
 
             <contentviews:PreviewLogo

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:languageresources="clr-namespace:QrGenerator.Desktop.Resources.LanguageResources"
              x:Class="QrGenerator.Desktop.ContentViews.DisplayImage">
     <VerticalStackLayout>
         <Image
@@ -26,13 +27,13 @@
         <HorizontalStackLayout>
             <Button
                 Margin="30"
-                Text="Display QR"
+                Text="{x:Static languageresources:LanguageLiterals.DisplayQr}"
                 HorizontalOptions="Fill"
                 Clicked="DisplayImageButton_Clicked"
                 />
             <Button
                 Margin="30"
-                Text="Save as SVG"
+                Text="{x:Static languageresources:LanguageLiterals.SaveAsSvg}"
                 HorizontalOptions="Fill"
                 Clicked="SaveSvgImageButton_Clicked"
                 />
