@@ -144,4 +144,13 @@
   <data name="HasLogo" xml:space="preserve">
     <value>Has logo?</value>
   </data>
+  <data name="ContentNotEmpy" xml:space="preserve">
+    <value>Content cannot be empty</value>
+  </data>
+  <data name="PasswordNotEmpty" xml:space="preserve">
+    <value>Password cannot be empty</value>
+  </data>
+  <data name="SsidNotEmpty" xml:space="preserve">
+    <value>SSID cannot be empty</value>
+  </data>
 </root>

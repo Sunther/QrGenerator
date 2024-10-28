@@ -49,17 +49,18 @@
             </VerticalStackLayout>
 
             <contentviews:PreviewLogo
-                LogoPath="{Binding ImagePath, Mode=TwoWay}"
-                />
+                LogoPath="{Binding ImagePath, Mode=TwoWay}" />
         </VerticalStackLayout>
 
-        <contentviews:DisplayImage
-            Grid.Column="1"
-            HorizontalOptions="Center"
-            VerticalOptions="Center"
-            DisplayCommand="{Binding DisplayWiFiImageCommand}"
-            SaveCommand="{Binding SaveWiFiImageCommand}"
-            BitmapQr="{Binding BitmapQrPreview}"
-            />
+        <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" >
+            <contentviews:DisplayImage
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                DisplayCommand="{Binding DisplayWiFiImageCommand}"
+                SaveCommand="{Binding SaveWiFiImageCommand}"
+                BitmapQr="{Binding BitmapQrPreview}"
+                />
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>

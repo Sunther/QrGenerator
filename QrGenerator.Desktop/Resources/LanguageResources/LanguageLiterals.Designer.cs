@@ -140,5 +140,32 @@ namespace QrGenerator.Desktop.Resources.LanguageResources {
                 return ResourceManager.GetString("Ssid", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid.
+        /// </summary>
+        internal static string SsidNotEmpty {
+            get {
+                return ResourceManager.GetString("SsidNotEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid.
+        /// </summary>
+        internal static string PasswordNotEmpty {
+            get {
+                return ResourceManager.GetString("PasswordNotEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid.
+        /// </summary>
+        internal static string ContentNotEmpy {
+            get {
+                return ResourceManager.GetString("ContentNotEmpy", resourceCulture);
+            }
+        }
     }
 }
