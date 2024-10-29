@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:QrGenerator.Desktop.ViewModels"
              xmlns:contentviews="clr-namespace:QrGenerator.Desktop.ContentViews"
+             xmlns:languageresources="clr-namespace:QrGenerator.Desktop.Resources.LanguageResources"
              x:Class="QrGenerator.Desktop.Views.WiFiQrPage"
              Title="WiFiQrPage">
 
@@ -16,7 +17,7 @@
             <VerticalStackLayout Margin="0,0,0,20">
                 <Label
                     HorizontalOptions="Start"
-                    Text="SSID"
+                    Text="{x:Static languageresources:LanguageLiterals.Ssid}"
                     Style="{StaticResource Headline}" />
                 <Entry
                     x:Name="SsidEntry"
@@ -27,7 +28,7 @@
             <VerticalStackLayout Margin="0,0,0,20">
                 <Label
                     HorizontalOptions="Start"
-                    Text="Password"
+                    Text="{x:Static languageresources:LanguageLiterals.Password}"
                     Style="{StaticResource Headline}" />
                 <Entry
                     x:Name="PasswordEntry"
@@ -38,7 +39,7 @@
             <VerticalStackLayout Margin="0,0,0,20">
                 <Label
                     HorizontalOptions="Start"
-                    Text="Authentication Type"
+                    Text="{x:Static languageresources:LanguageLiterals.AuthenticationType}"
                     Style="{StaticResource Headline}" />
 
                 <Picker
@@ -48,17 +49,18 @@
             </VerticalStackLayout>
 
             <contentviews:PreviewLogo
-                LogoPath="{Binding ImagePath, Mode=TwoWay}"
-                />
+                LogoPath="{Binding ImagePath, Mode=TwoWay}" />
         </VerticalStackLayout>
 
-        <contentviews:DisplayImage
-            Grid.Column="1"
-            HorizontalOptions="Center"
-            VerticalOptions="Center"
-            DisplayCommand="{Binding DisplayWiFiImageCommand}"
-            SaveCommand="{Binding SaveWiFiImageCommand}"
-            BitmapQr="{Binding BitmapQrPreview}"
-            />
+        <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" >
+            <contentviews:DisplayImage
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                DisplayCommand="{Binding DisplayWiFiImageCommand}"
+                SaveCommand="{Binding SaveWiFiImageCommand}"
+                BitmapQr="{Binding BitmapQrPreview}"
+                />
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>

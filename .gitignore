@@ -29,5 +29,8 @@ obj/
 packages/
 .vs/
 AuthExample/Migrations
+PublishHelper/
 
 #Exceptions
+!PublishHelper/Publish_Desktop.ps1
+!PublishHelper/QrGenerator.zip

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:QrGenerator.Desktop.ViewModels"
              xmlns:contentviews="clr-namespace:QrGenerator.Desktop.ContentViews"
+             xmlns:languageresources="clr-namespace:QrGenerator.Desktop.Resources.LanguageResources"
              x:Class="QrGenerator.Desktop.Views.SimpleQrPage"
              Title="SimpleQrPage">
 
@@ -11,11 +12,17 @@
     </ContentPage.BindingContext>
 
     <Grid RowDefinitions="*" ColumnDefinitions="*,*" Padding="30">
+
+        <contentviews:SelectLanguage
+            Grid.Column="1"
+            HorizontalOptions="End"
+            VerticalOptions="Start" />
+
         <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
             <VerticalStackLayout Margin="0,0,0,20">
                 <Label
                     HorizontalOptions="Start"
-                    Text="Content"
+                    Text="{x:Static languageresources:LanguageLiterals.Content}"
                     Style="{StaticResource Headline}" />
                 <Entry
                     x:Name="ContentEntry"
@@ -25,21 +32,21 @@
 
             <HorizontalStackLayout>
                 <CheckBox IsChecked="{Binding IsUrlChecked}" />
-                <Label Text="Is Url?" HorizontalOptions="Center" VerticalOptions="Center" />
+                <Label
+                    Text="{x:Static languageresources:LanguageLiterals.IsUrl}"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center" />
             </HorizontalStackLayout>
 
             <contentviews:PreviewLogo
-                LogoPath="{Binding ImagePath, Mode=TwoWay}"
-                />
+                LogoPath="{Binding ImagePath, Mode=TwoWay}" />
         </VerticalStackLayout>
 
-        <contentviews:DisplayImage
-            Grid.Column="1"
-            HorizontalOptions="Center"
-            VerticalOptions="Center"
-            DisplayCommand="{Binding DisplayWiFiImageCommand}"
-            SaveCommand="{Binding SaveWiFiImageCommand}"
-            BitmapQr="{Binding BitmapQrPreview}"
-            />
+        <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" >
+            <contentviews:DisplayImage
+                DisplayCommand="{Binding DisplayWiFiImageCommand}"
+                SaveCommand="{Binding SaveWiFiImageCommand}"
+                BitmapQr="{Binding BitmapQrPreview}" />
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>

@@ -2,7 +2,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using QrGenerator.Application.QrCodeCoders;
+using QrGenerator.Desktop.Resources.LanguageResources;
 using System.Drawing;
+using Windows.Globalization;
 
 namespace QrGenerator.Desktop.ViewModels;
 
@@ -80,12 +82,12 @@ internal partial class WiFiQR : ObservableObject
 
         if (string.IsNullOrWhiteSpace(Ssid))
         {
-            listErrors.Add("SSID cannot be empty.");
+            listErrors.Add(LanguageLiterals.SsidNotEmpty);
         }
 
         if (string.IsNullOrWhiteSpace(Password))
         {
-            listErrors.Add("Password cannot be empty.");
+            listErrors.Add(LanguageLiterals.PasswordNotEmpty);
         }
 
         if (listErrors.Count > 0)

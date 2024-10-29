@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:languageresources="clr-namespace:QrGenerator.Desktop.Resources.LanguageResources"
              x:Class="QrGenerator.Desktop.ContentViews.PreviewLogo">
 
     <VerticalStackLayout>
         <HorizontalStackLayout>
-            <CheckBox x:Name="HasLogoCheckbox" CheckedChanged="CheckBox_CheckedChanged" />
-            <Label Text="Has logo?" HorizontalOptions="Center" VerticalOptions="Center" />
+            <CheckBox
+                x:Name="HasLogoCheckbox"
+                CheckedChanged="CheckBox_CheckedChanged" />
+            <Label
+                Text="{x:Static languageresources:LanguageLiterals.HasLogo}"
+                HorizontalOptions="Center"
+                VerticalOptions="Center" />
         </HorizontalStackLayout>
         <Button
             x:Name="ImageSelectorButton"
             Margin="30"
-            Text="Select an image for a logo"
+            Text="{x:Static languageresources:LanguageLiterals.SelectImageLogo}"
             Clicked="ImageSelectorButton_Clicked"
             IsVisible="False"
             />

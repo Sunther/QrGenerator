@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using QrGenerator.Application.QrCodeCoders;
+using QrGenerator.Desktop.Resources.LanguageResources;
 
 namespace QrGenerator.Desktop.ViewModels;
 
@@ -69,7 +70,7 @@ internal partial class SimpleQr : ObservableObject
 
         if (string.IsNullOrWhiteSpace(Content))
         {
-            listErrors.Add("Content cannot be empty.");
+            listErrors.Add(LanguageLiterals.ContentNotEmpy);
         }
 
         if (listErrors.Count > 0)
