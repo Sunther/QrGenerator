@@ -1,6 +1,6 @@
-﻿using QRCoder;
+﻿using System.Drawing;
+using QRCoder;
 using QrGenerator.Application.Extensions;
-using System.Drawing;
 
 namespace QrGenerator.Application.QrCodeCoders;
 
@@ -17,22 +17,18 @@ public static class PngQrCoder
         ArgumentNullException.ThrowIfNull(ssid);
         ArgumentNullException.ThrowIfNull(password);
 
-        var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
         var type = authType is null ?
             PayloadGenerator.WiFi.Authentication.WPA :
             Enum.Parse<PayloadGenerator.WiFi.Authentication>(authType);
 
-        Bitmap bitmapResult;
         var wifiPayload = new PayloadGenerator.WiFi(ssid, password, type);
 
-        using (var qrGenerator = new QRCodeGenerator())
-        using (var qrCodeData = qrGenerator.CreateQrCode(wifiPayload.ToString(), QRCodeGenerator.ECCLevel.Q))
-        using (var qrCode = new QRCode(qrCodeData))
-        {
-            bitmapResult = qrCode.GetGraphic(QrCodeSize, Color.Black, Color.White, icon: bitmap?.AddCaption(ssid));
-        }
+        using var qrGenerator = new QRCodeGenerator();
+        using var qrCodeData = qrGenerator.CreateQrCode(wifiPayload.ToString(), QRCodeGenerator.ECCLevel.Q);
+        using var qrCode = new PngByteQRCode(qrCodeData);
+        using var memory = new MemoryStream(qrCode.GetGraphic(QrCodeSize));
 
-        return bitmapResult;
+        return new Bitmap(memory);
     }
 
     public static Bitmap GetQr(
@@ -40,7 +36,7 @@ public static class PngQrCoder
         string? imagePath = null)
     {
         ArgumentNullException.ThrowIfNull(content);
-        var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
+        using var bitmap = TryLoadBitmap(imagePath);
 
         Bitmap bitmapResult;
         using (var qrGenerator = new QRCodeGenerator())
@@ -58,17 +54,33 @@ public static class PngQrCoder
         string? imagePath = null)
     {
         ArgumentNullException.ThrowIfNull(content);
-        var bitmap = string.IsNullOrEmpty(imagePath) ? null : new Bitmap(imagePath);
+
         var urlPayload = new PayloadGenerator.Url(content);
 
-        Bitmap bitmapResult;
-        using (var qrGenerator = new QRCodeGenerator())
-        using (var qrCodeData = qrGenerator.CreateQrCode(urlPayload.ToString(), QRCodeGenerator.ECCLevel.Q))
-        using (var qrCode = new QRCode(qrCodeData))
+        using var qrGenerator = new QRCodeGenerator();
+        using var qrCodeData = qrGenerator.CreateQrCode(content, QRCodeGenerator.ECCLevel.Q);
+        using var qrCode = new PngByteQRCode(qrCodeData);
+        using var memory = new MemoryStream(qrCode.GetGraphic(QrCodeSize));
+
+        return new Bitmap(memory);
+    }
+
+    private static Bitmap? TryLoadBitmap(string? imagePath)
+    {
+        if (string.IsNullOrWhiteSpace(imagePath))
         {
-            bitmapResult = qrCode.GetGraphic(QrCodeSize, Color.Black, Color.White, icon: bitmap?.AddCaption(content.GetDomain()));
+            return null;
         }
 
-        return bitmapResult;
+        try
+        {
+            // This can throw if the file is invalid; we catch and return null.
+            return new Bitmap(imagePath);
+        }
+        catch
+        {
+            // TODO: optionally log the problem or propagate a custom error
+            return null;
+        }
     }
 }

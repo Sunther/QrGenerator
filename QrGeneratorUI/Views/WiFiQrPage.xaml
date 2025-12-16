@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:QrGeneratorUI.ViewModels"
+             xmlns:contentviews="clr-namespace:QrGeneratorUI.ContentViews"
+             xmlns:languageresources="clr-namespace:QrGeneratorUI.Resources.LanguageResources"
+             x:Class="QrGeneratorUI.Views.WiFiQrPage"
+             Title="WiFiQrPage">
+
+    <ContentPage.BindingContext>
+        <views:WiFiQR/>
+    </ContentPage.BindingContext>
+
+    <Grid RowDefinitions="*" ColumnDefinitions="*,*" Padding="30">
+
+        <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
+            <VerticalStackLayout Margin="0,0,0,20">
+                <Label
+                    HorizontalOptions="Start"
+                    Text="{x:Static languageresources:LanguageLiterals.Ssid}"
+                    Style="{StaticResource Headline}" />
+                <Entry
+                    x:Name="SsidEntry"
+                    Style="{DynamicResource BaseEntry}"
+                    Text="{Binding Ssid}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Margin="0,0,0,20">
+                <Label
+                    HorizontalOptions="Start"
+                    Text="{x:Static languageresources:LanguageLiterals.Password}"
+                    Style="{StaticResource Headline}" />
+                <Entry
+                    x:Name="PasswordEntry"
+                    Style="{DynamicResource BaseEntry}"
+                    Text="{Binding Password}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Margin="0,0,0,20">
+                <Label
+                    HorizontalOptions="Start"
+                    Text="{x:Static languageresources:LanguageLiterals.AuthenticationType}"
+                    Style="{StaticResource Headline}" />
+
+                <Picker
+                    x:Name="AuthenticationPicker"
+                    ItemsSource="{Binding AuthenticationPickerSource}"
+                    SelectedItem="{Binding SelectedAuthenticationType}"/>
+            </VerticalStackLayout>
+
+            <contentviews:PreviewLogo
+                LogoPath="{Binding ImagePath, Mode=TwoWay}" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center" >
+            <contentviews:DisplayImage
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                DisplayCommand="{Binding DisplayWiFiImageCommand}"
+                SaveCommand="{Binding SaveWiFiImageCommand}"
+                BitmapQr="{Binding BitmapQrPreview}"
+                />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>
